@@ -16,21 +16,25 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
+    private final SuccessAuthHandler successAuthHandler;
+
     private final UserDetailsService userDetailsService;
 
-    public SecurityConfiguration(UserDetailsService userDetailsService) {
+    public SecurityConfiguration(UserDetailsService userDetailsService,
+                                 SuccessAuthHandler successAuthHandler) {
         this.userDetailsService = userDetailsService;
+        this.successAuthHandler = successAuthHandler;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests((requests) -> requests
-                    .requestMatchers(Urls.INDEX).permitAll()
-                    .requestMatchers(Urls.MOVIES).authenticated()
+                    .requestMatchers(Urls.INDEX + "/**").permitAll()
+                    .requestMatchers(Urls.MOVIES + "/**").authenticated()
                 )
                 .formLogin((form) -> form
-                        .loginPage(Urls.LOGIN)
+                        .successHandler(successAuthHandler)
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll);
