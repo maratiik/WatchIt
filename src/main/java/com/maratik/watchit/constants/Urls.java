@@ -7,4 +7,7 @@ public abstract class Urls {
     public static final String LOGIN = "/login";
 
     public static final String MOVIES = "/movies";
+
+    public static final String SEARCH = "/search";
+
 }
