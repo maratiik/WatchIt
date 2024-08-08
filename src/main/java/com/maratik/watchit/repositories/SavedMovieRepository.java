@@ -6,16 +6,21 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-//TODO: in the future add User to queries
 @Repository
 public interface SavedMovieRepository extends JpaRepository<SavedMovie, Long> {
 
-    @Query("select s from SavedMovie s where s.searchResult.mediaType = ?1")
-    List<SavedMovie> findAllByMediaType(String mediaType);
+    @Query("select s from SavedMovie s where s.user.username = ?1")
+    List<SavedMovie> findAllByUserUsername(String username);
 
-    @Query("select s from SavedMovie s where upper(s.searchResult.title) like upper(concat('%', ?1, '%'))")
-    List<SavedMovie> findAllContainingTitle(String title);
+    @Query("""
+            select s from SavedMovie s
+            where upper(s.searchResult.title) like upper(concat('%', ?1, '%')) and s.user.username = ?2""")
+    List<SavedMovie> findAllContainingTitleAndByUserUsername(String title, String username);
+
+    @Query("select s from SavedMovie s where s.searchResult.mediaType = ?1 and s.user.username = ?2")
+    List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType, String username);
 
 }

@@ -5,20 +5,19 @@ import com.maratik.watchit.entities.SavedMovie;
 import java.util.List;
 import java.util.Optional;
 
-//TODO: in the future add User to queries
 public interface SavedMovieService {
 
-    Optional<SavedMovie> findById(long id);
+    Optional<SavedMovie> findByIdAndUserUsername(long id, String username);
 
-    List<SavedMovie> findAll();
+    List<SavedMovie> findAllByUserUsername(String username);
 
-    List<SavedMovie> findAllContainingTitle(String title);
+    List<SavedMovie> findAllContainingTitleAndByUserUsername(String title, String username);
 
-    List<SavedMovie> findAllByMediaType(String mediaType);
+    List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType, String username);
 
     SavedMovie save(SavedMovie savedMovie);
 
     SavedMovie update(SavedMovie savedMovie);
 
-    void deleteById(long id);
+    void deleteByIdAndUserUsername(long id, String username);
 }

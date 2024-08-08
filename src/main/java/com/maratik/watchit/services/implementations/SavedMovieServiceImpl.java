@@ -18,23 +18,32 @@ public class SavedMovieServiceImpl implements SavedMovieService {
     }
 
     @Override
-    public Optional<SavedMovie> findById(long id) {
-        return repository.findById(id);
+    public Optional<SavedMovie> findByIdAndUserUsername(long id, String username) {
+        Optional<SavedMovie> movie = repository.findById(id);
+        if (movie.isPresent()) {
+            if (username.equals(movie.get().getUser().getUsername())) {
+                return movie;
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public List<SavedMovie> findAll() {
-        return repository.findAll();
+    public List<SavedMovie> findAllByUserUsername(String username) {
+        return repository.findAllByUserUsername(username);
     }
 
     @Override
-    public List<SavedMovie> findAllContainingTitle(String title) {
-        return repository.findAllContainingTitle(title);
+    public List<SavedMovie> findAllContainingTitleAndByUserUsername(String title, String username) {
+        return repository.findAllContainingTitleAndByUserUsername(title, username);
     }
 
     @Override
-    public List<SavedMovie> findAllByMediaType(String mediaType) {
-        return repository.findAllByMediaType(mediaType);
+    public List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType, String username) {
+        return repository.findAllByMediaTypeAndUserUsername(mediaType, username);
     }
 
     @Override
@@ -48,7 +57,13 @@ public class SavedMovieServiceImpl implements SavedMovieService {
     }
 
     @Override
-    public void deleteById(long id) {
-        repository.deleteById(id);
+    public void deleteByIdAndUserUsername(long id, String username) {
+        Optional<SavedMovie> movie = repository.findById(id);
+
+        if (movie.isPresent()) {
+            if (username.equals(movie.get().getUser().getUsername())) {
+                repository.deleteById(id);
+            }
+        }
     }
 }

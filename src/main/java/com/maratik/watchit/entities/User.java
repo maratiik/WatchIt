@@ -1,6 +1,6 @@
 package com.maratik.watchit.entities;
 
-import com.maratik.watchit.data_classes.SearchResult;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,43 +14,39 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "saved_movie")
-public class SavedMovie {
+@Table(name = "user")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long savedMovieId;
+    private long id;
 
     @Column
-    private boolean finished = false;
+    private String username;
 
     @Column
-    private byte rating = 0;
-
-    @ManyToOne
-    private User user;
-
-    @Embedded
-    private SearchResult searchResult;
+    @JsonIgnore
+    private String password;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SavedMovie that = (SavedMovie) o;
-        return savedMovieId == that.savedMovieId && Objects.equals(searchResult, that.searchResult);
+        User user = (User) o;
+        return id == user.id && Objects.equals(username, user.username) && Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(savedMovieId, searchResult);
+        return Objects.hash(id, username, password);
     }
 
     @Override
     public String toString() {
-        return "SavedMovie{" +
-                "savedMovieId=" + savedMovieId +
-                ", searchResult=" + searchResult +
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }
