@@ -4,11 +4,13 @@ import com.maratik.watchit.entities.SavedMovie;
 import com.maratik.watchit.repositories.SavedMovieRepository;
 import com.maratik.watchit.services.interfaces.SavedMovieService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class SavedMovieServiceImpl implements SavedMovieService {
 
     private final SavedMovieRepository repository;
@@ -18,6 +20,7 @@ public class SavedMovieServiceImpl implements SavedMovieService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<SavedMovie> findByIdAndUserUsername(long id, String username) {
         Optional<SavedMovie> movie = repository.findById(id);
         if (movie.isPresent()) {
@@ -32,16 +35,19 @@ public class SavedMovieServiceImpl implements SavedMovieService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SavedMovie> findAllByUserUsername(String username) {
         return repository.findAllByUserUsername(username);
     }
 
     @Override
+    @Transactional
     public List<SavedMovie> findAllContainingTitleAndByUserUsername(String title, String username) {
         return repository.findAllContainingTitleAndByUserUsername(title, username);
     }
 
     @Override
+    @Transactional
     public List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType, String username) {
         return repository.findAllByMediaTypeAndUserUsername(mediaType, username);
     }

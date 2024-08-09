@@ -17,19 +17,33 @@ import java.util.Set;
 public class SearchResult {
 
     private boolean adult;
+
     private String backdropPath;
+
     private int id;
+
     private String title;
+
     private String originalLanguage;
+
     private String OriginalTitle;
+
     private String overview;
+
     private String posterPath;
+
     private String mediaType;
+
     private Set<Integer> genreIds;
+
     private double popularity;
+
     private String releaseDate;
+
     private boolean video;
+
     private double voteAverage;
+
     private int voteCount;
 
     @Override

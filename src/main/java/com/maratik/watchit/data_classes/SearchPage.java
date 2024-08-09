@@ -17,8 +17,11 @@ import java.util.Set;
 public class SearchPage {
 
     private int page;
+
     private Set<SearchResult> results;
+
     private int totalPages;
+
     private int totalResults;
 
     @Override

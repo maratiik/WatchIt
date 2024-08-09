@@ -42,7 +42,7 @@ public class TMDBSearchImpl implements TMDBSearch {
         return restTemplate.exchange(
                 multiSearchUrl.formatted(query, String.valueOf(page)),
                 HttpMethod.GET,
-                getHttpEntity(),
+                this.getHttpEntity(),
                 SearchPage.class
         ).getBody();
     }
@@ -54,7 +54,7 @@ public class TMDBSearchImpl implements TMDBSearch {
                 return restTemplate.exchange(
                         movieSearchUrl.formatted(query, String.valueOf(page)),
                         HttpMethod.GET,
-                        getHttpEntity(),
+                        this.getHttpEntity(),
                         SearchPage.class
                 ).getBody();
             }
@@ -62,7 +62,7 @@ public class TMDBSearchImpl implements TMDBSearch {
                 return restTemplate.exchange(
                         tvSearchUrl.formatted(query, String.valueOf(page)),
                         HttpMethod.GET,
-                        getHttpEntity(),
+                        this.getHttpEntity(),
                         SearchPage.class
                 ).getBody();
             }
