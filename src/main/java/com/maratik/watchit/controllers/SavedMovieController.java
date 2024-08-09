@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(Urls.MOVIES)
+@RequestMapping(Urls.API_MOVIES)
 public class SavedMovieController {
 
     private final SavedMovieService movieService;
@@ -27,24 +27,24 @@ public class SavedMovieController {
     }
 
     @GetMapping
-    public List<SavedMovie> findAll(Principal principal) {
-        return movieService.findAllByUserUsername(principal.getName());
+    public List<SavedMovie> findMovies(@RequestParam(value = "title", required = false) String title,
+                                       @RequestParam(value = "media_type", required = false) String mediaType,
+                                       Principal principal) {
+        if (title == null) {
+            if (mediaType == null) {
+                return movieService.findAllByUserUsername(principal.getName());
+            } else {
+                return movieService.findAllByMediaTypeAndUserUsername(mediaType, principal.getName());
+            }
+        } else {
+            return movieService.findAllContainingTitleAndByUserUsername(title, principal.getName());
+        }
     }
 
     @GetMapping("{id}")
     public ResponseEntity<SavedMovie> findById(Principal principal, @PathVariable Long id) {
         Optional<SavedMovie> movie = movieService.findByIdAndUserUsername(id, principal.getName());
         return movie.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping
-    public List<SavedMovie> findAllContainingTitle(@RequestParam String title, Principal principal) {
-        return movieService.findAllContainingTitleAndByUserUsername(title, principal.getName());
-    }
-
-    @GetMapping
-    public List<SavedMovie> findAllByMediaType(@RequestParam String MediaType, Principal principal) {
-        return movieService.findAllByMediaTypeAndUserUsername(MediaType, principal.getName());
     }
 
     @PostMapping

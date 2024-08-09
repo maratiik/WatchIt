@@ -9,16 +9,21 @@ public class PagesController {
 
     @GetMapping(Urls.INDEX)
     public String index() {
-        return "index";
+        return "index.html";
+    }
+
+    @GetMapping(Urls.SIGNUP)
+    public String signup() {
+        return "signup.html";
     }
 
     @GetMapping(Urls.MOVIES)
     public String movies() {
-        return "movies";
+        return "movies.html";
     }
 
     @GetMapping(Urls.SEARCH)
     public String search() {
-        return "search";
+        return "search.html";
     }
 }

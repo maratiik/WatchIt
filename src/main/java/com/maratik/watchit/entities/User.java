@@ -1,6 +1,5 @@
 package com.maratik.watchit.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "user_data")
 public class User {
 
     @Id
@@ -25,7 +24,6 @@ public class User {
     private String username;
 
     @Column
-    @JsonIgnore
     private String password;
 
     @Override

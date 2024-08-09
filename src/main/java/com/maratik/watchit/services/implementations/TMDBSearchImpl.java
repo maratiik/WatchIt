@@ -14,18 +14,18 @@ import org.springframework.web.client.RestTemplate;
 public class TMDBSearchImpl implements TMDBSearch {
 
     private final String multiSearchUrl =
-            "https://api.themoviedb.org/3/search/multi?query=interstellar&include_adult=false&language=en-US&page=";
+            "https://api.themoviedb.org/3/search/multi?query=%s&include_adult=false&language=en-US&page=%s";
 
     private final String movieSearchUrl =
-            "https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=";
+            "https://api.themoviedb.org/3/search/movie?query=%s&include_adult=false&language=en-US&page=%s";
 
     private final String tvSearchUrl =
-            "https://api.themoviedb.org/3/search/tv?query=interstellar&include_adult=false&language=en-US&page=";
+            "https://api.themoviedb.org/3/search/tv?query=%s&include_adult=false&language=en-US&page=%s";
 
     @Value("${API_KEY}")
     private String apiKey;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public SearchPage search(String query) {
@@ -40,7 +40,7 @@ public class TMDBSearchImpl implements TMDBSearch {
     @Override
     public SearchPage search(String query, int page) {
         return restTemplate.exchange(
-                multiSearchUrl + String.valueOf(page),
+                multiSearchUrl.formatted(query, String.valueOf(page)),
                 HttpMethod.GET,
                 getHttpEntity(),
                 SearchPage.class
@@ -52,7 +52,7 @@ public class TMDBSearchImpl implements TMDBSearch {
         switch (mediaType) {
             case MediaType.MOVIE -> {
                 return restTemplate.exchange(
-                        movieSearchUrl + String.valueOf(page),
+                        movieSearchUrl.formatted(query, String.valueOf(page)),
                         HttpMethod.GET,
                         getHttpEntity(),
                         SearchPage.class
@@ -60,7 +60,7 @@ public class TMDBSearchImpl implements TMDBSearch {
             }
             case MediaType.TV -> {
                 return restTemplate.exchange(
-                        tvSearchUrl + String.valueOf(page),
+                        tvSearchUrl.formatted(query, String.valueOf(page)),
                         HttpMethod.GET,
                         getHttpEntity(),
                         SearchPage.class

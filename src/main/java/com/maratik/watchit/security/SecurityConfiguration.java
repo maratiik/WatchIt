@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,9 +30,11 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests((requests) -> requests
-                    .requestMatchers(Urls.INDEX + "/**").permitAll()
-                    .requestMatchers(Urls.MOVIES + "/**").authenticated()
+                        .requestMatchers(Urls.INDEX).permitAll()
+                        .requestMatchers(Urls.MOVIES + "/**").authenticated()
+                        .requestMatchers(Urls.SEARCH + "/**").authenticated()
                 )
                 .formLogin((form) -> form
                         .successHandler(successAuthHandler)

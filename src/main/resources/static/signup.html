@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - WatchIt</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- Centered Container -->
+<div class="container" style="max-width: 50%; margin-top: 50px;">
+    <!-- Header -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <h1 class="navbar-brand mb-0">WatchIt</h1>
+            <div>
+                <button class="btn btn-outline-secondary" type="button" onclick="history.back();">Back</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Signup Form -->
+    <div class="mt-4">
+        <form id="signup-form">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Signup</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS (optional, for interactivity) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom Script -->
+<script>
+    document.getElementById('signup-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Остановить стандартное поведение формы
+
+        // Получение значений полей
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        // Формирование объекта данных
+        var data = {
+            username: username,
+            password: password
+        };
+
+        console.info(data);
+
+        // Отправка данных через fetch
+        fetch('/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Если сервер вернул статус ошибки, выведем сообщение и сделаем редирект
+                    return response.json().then(result => {
+                        console.error('Error:', result);
+                        window.location.href = '/'; // Редирект на главную страницу при ошибке
+                    });
+                }
+                return response.json(); // Продолжаем обработку, если всё прошло успешно
+            })
+            .then(result => {
+                console.log('Success:', result);
+                window.location.href = '/'; // Редирект на главную страницу после успешного запроса
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Можно добавить дополнительную обработку ошибки, если необходимо
+                window.location.href = '/'; // Редирект на главную страницу при исключении
+            });
+    });
+</script>
+</body>
+</html>

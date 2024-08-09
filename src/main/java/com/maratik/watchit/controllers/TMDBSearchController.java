@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(Urls.SEARCH)
+@RequestMapping(Urls.API_SEARCH)
 public class TMDBSearchController {
 
     private final TMDBSearch search;
@@ -20,27 +20,21 @@ public class TMDBSearchController {
     }
 
     @GetMapping
-    public ResponseEntity<SearchPage> search(@RequestParam("query") String query) {
-        return ResponseEntity.ok(search.search(query));
-    }
-
-    @GetMapping
-    public ResponseEntity<SearchPage> search(
-            @RequestParam("query") String query,
-            @RequestParam("mediaType") String mediaType) {
-        return ResponseEntity.ok(search.search(query, mediaType));
-    }
-
-    @GetMapping
-    public ResponseEntity<SearchPage> search(@RequestParam("query") String query,
-                                             @RequestParam("page") int page) {
-        return ResponseEntity.ok(search.search(query, page));
-    }
-
-    @GetMapping
-    public ResponseEntity<SearchPage> search(@RequestParam("query") String query,
-                                             @RequestParam("mediaType") String mediaType,
-                                             @RequestParam("page") int page) {
-        return ResponseEntity.ok(search.search(query, mediaType, page));
+    public ResponseEntity<SearchPage> search(@RequestParam(value = "query") String query,
+                                             @RequestParam(value = "mediaType", required = false) String mediaType,
+                                             @RequestParam(value = "page", required = false) Integer page) {
+        if (page == null) {
+            if (mediaType == null) {
+                return ResponseEntity.ok(search.search(query));
+            } else {
+                return ResponseEntity.ok(search.search(query, mediaType));
+            }
+        } else {
+            if (mediaType == null) {
+                return ResponseEntity.ok(search.search(query, page));
+            } else {
+                return ResponseEntity.ok(search.search(query, mediaType, page));
+            }
+        }
     }
 }
