@@ -19,7 +19,7 @@ public class SearchResult {
 
     private boolean adult;
 
-    @JsonProperty("backdrop_path")
+    @JsonAlias("backdrop_path")
     private String backdropPath;
 
     private int id;
