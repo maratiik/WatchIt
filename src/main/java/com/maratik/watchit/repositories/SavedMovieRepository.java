@@ -15,10 +15,10 @@ public interface SavedMovieRepository extends JpaRepository<SavedMovie, Long> {
 
     @Query("""
             select s from SavedMovie s
-            where upper(s.searchResult.title) like upper(concat('%', ?1, '%')) and s.user.username = ?2""")
+            where upper(s.title) like upper(concat('%', ?1, '%')) and s.user.username = ?2""")
     List<SavedMovie> findAllContainingTitleAndByUserUsername(String title, String username);
 
-    @Query("select s from SavedMovie s where s.searchResult.mediaType = ?1 and s.user.username = ?2")
+    @Query("select s from SavedMovie s where s.mediaType = ?1 and s.user.username = ?2")
     List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType, String username);
 
 }

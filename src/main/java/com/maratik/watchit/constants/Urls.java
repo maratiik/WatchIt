@@ -14,6 +14,6 @@ public abstract class Urls {
 
     public static final String API_MOVIES = "/api/v1/movies";
 
-    public static final String API_SEARCH = "/api/v1/search";
+    public static final String API_SEARCH = "/api/v1/search/";
 
 }

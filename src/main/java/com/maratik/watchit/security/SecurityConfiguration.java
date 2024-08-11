@@ -35,6 +35,8 @@ public class SecurityConfiguration {
                         .requestMatchers(Urls.INDEX).permitAll()
                         .requestMatchers(Urls.MOVIES + "/**").authenticated()
                         .requestMatchers(Urls.SEARCH + "/**").authenticated()
+                        .requestMatchers(Urls.API_SEARCH + "/**").authenticated()
+                        .requestMatchers(Urls.API_MOVIES + "/**").authenticated()
                 )
                 .formLogin((form) -> form
                         .successHandler(successAuthHandler)

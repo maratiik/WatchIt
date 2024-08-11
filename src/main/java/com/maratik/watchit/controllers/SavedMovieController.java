@@ -49,6 +49,7 @@ public class SavedMovieController {
 
     @PostMapping
     public ResponseEntity<Void> save(@RequestBody SavedMovie savedMovie, Principal principal) {
+        System.out.println(savedMovie);
         savedMovie.setUser(userRepository.findByUsername(principal.getName()).get());
         movieService.save(savedMovie);
         return ResponseEntity.ok().build();

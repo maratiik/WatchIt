@@ -28,26 +28,6 @@ public class TMDBSearchImpl implements TMDBSearch {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public SearchPage search(String query) {
-        return search(query, 1);
-    }
-
-    @Override
-    public SearchPage search(String query, String mediaType) {
-        return search(query, mediaType, 1);
-    }
-
-    @Override
-    public SearchPage search(String query, int page) {
-        return restTemplate.exchange(
-                multiSearchUrl.formatted(query, String.valueOf(page)),
-                HttpMethod.GET,
-                this.getHttpEntity(),
-                SearchPage.class
-        ).getBody();
-    }
-
-    @Override
     public SearchPage search(String query, String mediaType, int page) {
         switch (mediaType) {
             case MediaType.MOVIE -> {
@@ -61,6 +41,14 @@ public class TMDBSearchImpl implements TMDBSearch {
             case MediaType.TV -> {
                 return restTemplate.exchange(
                         tvSearchUrl.formatted(query, String.valueOf(page)),
+                        HttpMethod.GET,
+                        this.getHttpEntity(),
+                        SearchPage.class
+                ).getBody();
+            }
+            case MediaType.ANY -> {
+                return restTemplate.exchange(
+                        multiSearchUrl.formatted(query, String.valueOf(page)),
                         HttpMethod.GET,
                         this.getHttpEntity(),
                         SearchPage.class

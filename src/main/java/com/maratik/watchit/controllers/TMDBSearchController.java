@@ -20,21 +20,13 @@ public class TMDBSearchController {
     }
 
     @GetMapping
-    public ResponseEntity<SearchPage> search(@RequestParam(value = "query") String query,
-                                             @RequestParam(value = "mediaType", required = false) String mediaType,
-                                             @RequestParam(value = "page", required = false) Integer page) {
-        if (page == null) {
-            if (mediaType == null) {
-                return ResponseEntity.ok(search.search(query));
-            } else {
-                return ResponseEntity.ok(search.search(query, mediaType));
-            }
-        } else {
-            if (mediaType == null) {
-                return ResponseEntity.ok(search.search(query, page));
-            } else {
-                return ResponseEntity.ok(search.search(query, mediaType, page));
-            }
-        }
+    public SearchPage search(
+            @RequestParam(value = "query") String query,
+            @RequestParam(value = "mediaType") String mediaType,
+            @RequestParam(value = "page") Integer page) {
+        System.out.printf("SearchController.search(%s, %s, %d)%n", query, mediaType, page);
+        SearchPage res = search.search(query, mediaType, page);
+        System.out.println(res);
+        return res;
     }
 }

@@ -1,13 +1,15 @@
 package com.maratik.watchit.data_classes;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -18,10 +20,12 @@ public class SearchPage {
 
     private int page;
 
-    private Set<SearchResult> results;
+    private List<SearchResult> results;
 
+    @JsonAlias("total_pages")
     private int totalPages;
 
+    @JsonAlias("total_results")
     private int totalResults;
 
     @Override

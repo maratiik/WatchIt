@@ -1,5 +1,7 @@
 package com.maratik.watchit.data_classes;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,37 +15,46 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable
 public class SearchResult {
 
     private boolean adult;
 
+    @JsonProperty("backdrop_path")
     private String backdropPath;
 
     private int id;
 
+    @JsonAlias("name")
     private String title;
 
+    @JsonAlias("original_language")
     private String originalLanguage;
 
-    private String OriginalTitle;
+    @JsonAlias({"original_name", "original_title"})
+    private String originalTitle;
 
     private String overview;
 
+    @JsonAlias("poster_path")
     private String posterPath;
 
+    @JsonAlias("media_type")
     private String mediaType;
 
+    @JsonAlias("genre_ids")
     private Set<Integer> genreIds;
 
     private double popularity;
 
+    @JsonAlias({"first_air_date", "release_date"})
     private String releaseDate;
 
     private boolean video;
 
+    @JsonAlias("vote_average")
     private double voteAverage;
 
+    @JsonAlias("vote_count")
     private int voteCount;
 
     @Override
@@ -60,7 +71,7 @@ public class SearchResult {
                 Objects.equals(backdropPath, that.backdropPath) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(originalLanguage, that.originalLanguage) &&
-                Objects.equals(OriginalTitle, that.OriginalTitle) &&
+                Objects.equals(originalTitle, that.originalTitle) &&
                 Objects.equals(overview, that.overview) &&
                 Objects.equals(posterPath, that.posterPath) &&
                 Objects.equals(mediaType, that.mediaType) &&
@@ -72,7 +83,7 @@ public class SearchResult {
     public int hashCode() {
         return Objects.hash(
                 adult, backdropPath, id,
-                title, originalLanguage, OriginalTitle,
+                title, originalLanguage, originalTitle,
                 overview, posterPath, mediaType,
                 genreIds, popularity, releaseDate,
                 video, voteAverage, voteCount);
@@ -86,7 +97,7 @@ public class SearchResult {
                 ", id=" + id +
                 ", title='" + title + '\'' +
                 ", originalLanguage='" + originalLanguage + '\'' +
-                ", OriginalTitle='" + OriginalTitle + '\'' +
+                ", OriginalTitle='" + originalTitle + '\'' +
                 ", overview='" + overview + '\'' +
                 ", posterPath='" + posterPath + '\'' +
                 ", mediaType='" + mediaType + '\'' +
