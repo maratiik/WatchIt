@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WatchIt</title>
+    <title>Saved Movies - WatchIt</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -11,13 +11,13 @@
             display: flex;
             flex-direction: row;
             margin-bottom: 1rem;
-            border: 1px solid #ddd; /* Рамка для карточек */
+            border: 1px solid #ddd;
             border-radius: 0.25rem;
             padding: 0.5rem;
-            position: relative; /* Для абсолютного позиционирования кнопки */
+            position: relative;
         }
         .card-img {
-            width: 150px; /* Размер изображения */
+            width: 150px;
             height: auto;
             margin-right: 1rem;
             border-radius: 0.25rem;
@@ -25,21 +25,16 @@
         .card-body {
             flex: 1;
         }
-        .input-group {
+        .watched-switch {
             display: flex;
-            flex-wrap: nowrap;
             align-items: center;
+            gap: 10px;
         }
-        .form-select {
-            width: 150px; /* Ширина ползунка */
+        .rating-input {
+            width: 60px;
+            text-align: center;
         }
-        .form-control {
-            flex: 1; /* Растягиваем поле ввода */
-        }
-        .pagination .page-item .page-link {
-            cursor: pointer;
-        }
-        .save-button {
+        .delete-button {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -55,10 +50,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Search</a>
+                        <a id="searchNavLink" class="nav-link" href="search.html">Search</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Saved</a>
+                        <a id="savedNavLink" class="nav-link active" href="movies.html">Saved</a>
                     </li>
                 </ul>
             </div>
@@ -70,32 +65,23 @@
         <div class="input-group">
             <!-- Media Type Toggle -->
             <select id="mediaType" class="form-select">
-                <option value="Any">Any</option>
+                <option value="">Any</option>
                 <option value="Movie">Movie</option>
                 <option value="TV">TV</option>
             </select>
             <!-- Search Input -->
-            <input type="text" id="searchInput" class="form-control" placeholder="Search for a movie or TV show...">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by title...">
             <!-- Search Button -->
             <button class="btn btn-primary" id="searchButton" type="button">Search</button>
         </div>
     </div>
 
-    <!-- Search Results -->
+    <!-- Saved Movies -->
     <div class="mt-4">
-        <h5 id="totalResults"></h5>
-        <div id="searchResults">
-            <!-- Здесь будут динамически добавлены карточки с результатами поиска -->
+        <h5>Saved Movies</h5>
+        <div id="moviesList">
+            <!-- Здесь будут динамически добавлены карточки с сохраненными фильмами -->
         </div>
-    </div>
-
-    <!-- Pagination -->
-    <div class="mt-4">
-        <nav>
-            <ul class="pagination justify-content-center" id="pagination">
-                <!-- Здесь будет динамически добавлена пагинация -->
-            </ul>
-        </nav>
     </div>
 </div>
 
@@ -103,161 +89,191 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    document.getElementById('searchButton').addEventListener('click', function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchMovies();
+
+        document.getElementById('searchButton').addEventListener('click', function () {
+            fetchMovies();
+        });
+    });
+
+    function fetchMovies() {
         const query = document.getElementById('searchInput').value;
         const mediaType = document.getElementById('mediaType').value;
 
-        fetch(`/api/v1/search/?query=${encodeURIComponent(query)}&mediaType=${mediaType}&page=1`)
+        let url = '/api/v1/movies?';
+        if (query) {
+            url += `title=${encodeURIComponent(query)}&`;
+        }
+        if (mediaType) {
+            url += `media_type=${encodeURIComponent(mediaType)}`;
+        }
+
+        fetch(url)
             .then(response => response.json())
             .then(data => {
-                displayResults(data);
+                displayMovies(data);
             })
             .catch(error => console.error('Error:', error));
-    });
+    }
 
-    function displayResults(searchPage) {
-        const searchResults = document.getElementById('searchResults');
-        searchResults.innerHTML = '';
+    function displayMovies(movies) {
+        const moviesList = document.getElementById('moviesList');
+        moviesList.innerHTML = '';
 
-        document.getElementById('totalResults').textContent = `Total Results: ${searchPage.totalResults}`;
-
-        searchPage.results.forEach(result => {
+        movies.forEach(movie => {
             const cardContainer = document.createElement('div');
             cardContainer.classList.add('card-container');
 
-            const posterUrl = `https://image.tmdb.org/t/p/w500/${result.posterPath}`;
+            const posterUrl = `https://image.tmdb.org/t/p/w500/${movie.posterPath}`;
             const posterImg = document.createElement('img');
             posterImg.src = posterUrl;
             posterImg.classList.add('card-img');
-            posterImg.alt = result.title;
+            posterImg.alt = movie.title;
 
             const cardBody = document.createElement('div');
             cardBody.classList.add('card-body');
 
             const cardTitle = document.createElement('h5');
             cardTitle.classList.add('card-title');
-            cardTitle.textContent = result.title;
+            cardTitle.textContent = movie.title;
 
             const originalTitle = document.createElement('p');
             originalTitle.classList.add('card-subtitle', 'text-muted');
-            originalTitle.textContent = result.originalTitle;
+            originalTitle.textContent = movie.originalTitle;
 
             const releaseDate = document.createElement('p');
             releaseDate.classList.add('card-text');
-            releaseDate.textContent = `Release Date: ${result.releaseDate}`;
+            releaseDate.textContent = `Release Date: ${movie.releaseDate}`;
 
             const mediaType = document.createElement('p');
             mediaType.classList.add('card-text');
-            mediaType.textContent = `Media Type: ${result.mediaType}`;
+            mediaType.textContent = `Media Type: ${movie.mediaType}`;
 
             const overview = document.createElement('p');
             overview.classList.add('card-text');
-            overview.textContent = result.overview;
+            overview.textContent = movie.overview;
+
+            const watchedSwitch = document.createElement('div');
+            watchedSwitch.classList.add('watched-switch');
+
+            const watchedLabel = document.createElement('label');
+            watchedLabel.textContent = 'Watched:';
+
+            const watchedCheckbox = document.createElement('input');
+            watchedCheckbox.type = 'checkbox';
+            watchedCheckbox.checked = movie.finished;
+
+            const ratingLabel = document.createElement('label');
+            ratingLabel.textContent = 'Rating:';
+
+            const ratingInput = document.createElement('input');
+            ratingInput.type = 'number';
+            ratingInput.min = '0';
+            ratingInput.max = '10';
+            ratingInput.value = movie.rating;
+            ratingInput.classList.add('rating-input');
+
+            watchedSwitch.appendChild(watchedLabel);
+            watchedSwitch.appendChild(watchedCheckbox);
+            watchedSwitch.appendChild(ratingLabel);
+            watchedSwitch.appendChild(ratingInput);
+
+            watchedCheckbox.addEventListener('change', function () {
+                if (watchedCheckbox.checked) {
+                    const ratingValue = parseInt(ratingInput.value);
+                    if (ratingValue >= 0 && ratingValue <= 10) {
+                        movie.finished = true;
+                        movie.rating = ratingValue;
+                        updateMovie(movie);
+                    } else {
+                        alert('Please enter a rating between 0 and 10 before marking as watched.');
+                        watchedCheckbox.checked = false;
+                    }
+                } else {
+                    movie.finished = false;
+                    updateMovie(movie);
+                }
+            });
+
+            // Добавление кнопки Delete
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('btn', 'btn-danger', 'delete-button');
+            deleteButton.addEventListener('click', function () {
+                deleteMovie(movie.savedMovieId, cardContainer);
+            });
 
             cardBody.appendChild(cardTitle);
             cardBody.appendChild(originalTitle);
             cardBody.appendChild(releaseDate);
             cardBody.appendChild(mediaType);
             cardBody.appendChild(overview);
+            cardBody.appendChild(watchedSwitch);
 
             cardContainer.appendChild(posterImg);
             cardContainer.appendChild(cardBody);
+            cardContainer.appendChild(deleteButton);
 
-            // Add "Save" button
-            const saveButton = document.createElement('button');
-            saveButton.textContent = 'Save';
-            saveButton.classList.add('btn', 'btn-secondary', 'save-button');
-            saveButton.addEventListener('click', function () {
-                saveMovie(result, saveButton);
-            });
-
-            cardContainer.appendChild(saveButton);
-
-            searchResults.appendChild(cardContainer);
+            moviesList.appendChild(cardContainer);
         });
-
-        // Update pagination
-        updatePagination(searchPage.totalPages);
     }
 
-    function updatePagination(totalPages) {
-        const pagination = document.getElementById('pagination');
-        pagination.innerHTML = '';
-
-        for (let i = 1; i <= totalPages; i++) {
-            const pageItem = document.createElement('li');
-            pageItem.classList.add('page-item');
-            const pageLink = document.createElement('a');
-            pageLink.classList.add('page-link');
-            pageLink.href = '#';
-            pageLink.textContent = i;
-            pageLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                fetchPage(i);
-            });
-            pageItem.appendChild(pageLink);
-            pagination.appendChild(pageItem);
-        }
-    }
-
-    function fetchPage(page) {
-        const query = document.getElementById('searchInput').value;
-        const mediaType = document.getElementById('mediaType').value;
-
-        fetch(`/api/v1/search/?query=${encodeURIComponent(query)}&mediaType=${mediaType}&page=${page}`)
-            .then(response => response.json())
-            .then(data => {
-                displayResults(data);
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    function saveMovie(movie, button) {
-        fetch('/api/v1/movies', {
-            method: 'POST',
+    function updateMovie(movie) {
+        fetch(`/api/v1/movies`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                id: movie.id,
-                title: movie.title,
-                originalLanguage: movie.originalLanguage,
-                originalTitle: movie.originalTitle,
-                overview: movie.overview,
-                posterPath: movie.posterPath,
-                mediaType: movie.mediaType,
-                popularity: movie.popularity,
-                releaseDate: movie.releaseDate,
-                voteAverage: movie.voteAverage
-            })
+            body: JSON.stringify(movie)
         })
             .then(response => {
-                // Check if the response is not ok (status outside 200-299)
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-
-                // If the response is empty, return an empty object
-                return response.text().then(text => text ? JSON.parse(text) : {});
+                return response.json();
             })
             .then(data => {
-                console.log('Movie saved:', data);
-                button.textContent = 'Saved';
-                button.classList.remove('btn-secondary');
-                button.classList.add('btn-success');
-                button.disabled = true; // Disable the button
+                console.log('Movie updated:', data);
             })
             .catch(error => {
-                console.error('Error saving movie:', error);
-                button.textContent = 'Save Failed';
-                button.classList.remove('btn-secondary');
-                button.classList.add('btn-danger');
+                console.error('Error updating movie:', error);
             });
     }
 
+    function deleteMovie(movieId, cardElement) {
+        fetch(`/api/v1/movies/${movieId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Удаляем элемент карточки из DOM
+                cardElement.remove();
+                console.log('Movie deleted successfully');
+            })
+            .catch(error => {
+                console.error('Error deleting movie:', error);
+            });
+    }
+
+    // Highlight the active navbar link based on the current page
+    function highlightActiveLink() {
+        const searchLink = document.getElementById('searchNavLink');
+        const savedLink = document.getElementById('savedNavLink');
+        const currentPage = window.location.pathname;
+
+        if (currentPage.includes('search.html')) {
+            searchLink.classList.add('active');
+        } else if (currentPage.includes('movies.html')) {
+            savedLink.classList.add('active');
+        }
+    }
+
+    highlightActiveLink();
+
 </script>
-
-
 
 </body>
 </html>

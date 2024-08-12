@@ -21,7 +21,8 @@ public class SavedMovieServiceImpl implements SavedMovieService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<SavedMovie> findByIdAndUserUsername(long id, String username) {
+    public Optional<SavedMovie> findByIdAndUserUsername(long id,
+                                                        String username) {
         Optional<SavedMovie> movie = repository.findById(id);
         if (movie.isPresent()) {
             if (username.equals(movie.get().getUser().getUsername())) {
@@ -41,15 +42,25 @@ public class SavedMovieServiceImpl implements SavedMovieService {
     }
 
     @Override
-    @Transactional
-    public List<SavedMovie> findAllContainingTitleAndByUserUsername(String title, String username) {
+    @Transactional(readOnly = true)
+    public List<SavedMovie> findAllContainingTitleAndByUserUsername(String title,
+                                                                    String username) {
         return repository.findAllContainingTitleAndByUserUsername(title, username);
     }
 
     @Override
-    @Transactional
-    public List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType, String username) {
+    @Transactional(readOnly = true)
+    public List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType,
+                                                              String username) {
         return repository.findAllByMediaTypeAndUserUsername(mediaType, username);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SavedMovie> findAllContainingTitleAndByMediaTypeAndUserUsername(String title,
+                                                                                String mediaType,
+                                                                                String username) {
+        return repository.findAllContainingTitleAndByMediaTypeAndUserUsername(title, mediaType, username);
     }
 
     @Override
@@ -63,7 +74,8 @@ public class SavedMovieServiceImpl implements SavedMovieService {
     }
 
     @Override
-    public void deleteByIdAndUserUsername(long id, String username) {
+    public void deleteByIdAndUserUsername(long id,
+                                          String username) {
         Optional<SavedMovie> movie = repository.findById(id);
 
         if (movie.isPresent()) {

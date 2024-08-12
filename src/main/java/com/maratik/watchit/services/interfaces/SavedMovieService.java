@@ -7,17 +7,25 @@ import java.util.Optional;
 
 public interface SavedMovieService {
 
-    Optional<SavedMovie> findByIdAndUserUsername(long id, String username);
+    Optional<SavedMovie> findByIdAndUserUsername(long id,
+                                                 String username);
 
     List<SavedMovie> findAllByUserUsername(String username);
 
-    List<SavedMovie> findAllContainingTitleAndByUserUsername(String title, String username);
+    List<SavedMovie> findAllContainingTitleAndByUserUsername(String title,
+                                                             String username);
 
-    List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType, String username);
+    List<SavedMovie> findAllByMediaTypeAndUserUsername(String mediaType,
+                                                       String username);
+
+    List<SavedMovie> findAllContainingTitleAndByMediaTypeAndUserUsername(String title,
+                                                                         String mediaType,
+                                                                         String username);
 
     SavedMovie save(SavedMovie savedMovie);
 
     SavedMovie update(SavedMovie savedMovie);
 
-    void deleteByIdAndUserUsername(long id, String username);
+    void deleteByIdAndUserUsername(long id,
+                                   String username);
 }

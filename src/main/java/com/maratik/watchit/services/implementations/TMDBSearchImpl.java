@@ -28,13 +28,20 @@ public class TMDBSearchImpl implements TMDBSearch {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public SearchPage search(String query, String mediaType, int page) {
+    public SearchPage search(String query,
+                             String mediaType,
+                             int page) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("accept", "application/json");
+        headers.set("Authorization", "Bearer " + apiKey);
+        HttpEntity<String> httpEntity = new HttpEntity<>(query, headers);
+
         switch (mediaType) {
             case MediaType.MOVIE -> {
                 return restTemplate.exchange(
                         movieSearchUrl.formatted(query, String.valueOf(page)),
                         HttpMethod.GET,
-                        this.getHttpEntity(),
+                        httpEntity,
                         SearchPage.class
                 ).getBody();
             }
@@ -42,7 +49,7 @@ public class TMDBSearchImpl implements TMDBSearch {
                 return restTemplate.exchange(
                         tvSearchUrl.formatted(query, String.valueOf(page)),
                         HttpMethod.GET,
-                        this.getHttpEntity(),
+                        httpEntity,
                         SearchPage.class
                 ).getBody();
             }
@@ -50,7 +57,7 @@ public class TMDBSearchImpl implements TMDBSearch {
                 return restTemplate.exchange(
                         multiSearchUrl.formatted(query, String.valueOf(page)),
                         HttpMethod.GET,
-                        this.getHttpEntity(),
+                        httpEntity,
                         SearchPage.class
                 ).getBody();
             }
@@ -58,12 +65,5 @@ public class TMDBSearchImpl implements TMDBSearch {
                 return new SearchPage();
             }
         }
-    }
-
-    private HttpEntity<Object> getHttpEntity() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("accept", "application/json");
-        headers.set("Authorization", "Bearer " + apiKey);
-        return new HttpEntity<>(headers);
     }
 }

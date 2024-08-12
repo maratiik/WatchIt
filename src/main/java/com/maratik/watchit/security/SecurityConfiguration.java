@@ -32,15 +32,16 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(Urls.INDEX).permitAll()
-                        .requestMatchers(Urls.MOVIES + "/**").authenticated()
-                        .requestMatchers(Urls.SEARCH + "/**").authenticated()
-                        .requestMatchers(Urls.API_MOVIES + "/**").authenticated()
-                        .requestMatchers(Urls.API_SEARCH + "/**").authenticated())
+                        .requestMatchers(Urls.INDEX, "index.html").permitAll()
+                        .requestMatchers(Urls.SIGNUP, "signup.html").permitAll()
+                        .requestMatchers(Urls.MOVIES + "/**", "movies.html").authenticated()
+                        .requestMatchers(Urls.SEARCH + "/**", "search.html").authenticated()
+                        .requestMatchers(Urls.API + "/**").authenticated())
                 .formLogin(form -> form
                         .successHandler(successAuthHandler)
                         .permitAll())
                 .logout(LogoutConfigurer::permitAll);
+
         return http.build();
     }
 

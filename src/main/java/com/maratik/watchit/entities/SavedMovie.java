@@ -1,6 +1,5 @@
 package com.maratik.watchit.entities;
 
-import com.maratik.watchit.data_classes.SearchResult;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -43,7 +41,7 @@ public class SavedMovie {
     @Column
     private String originalTitle;
 
-    @Column
+    @Column(length = 5000)
     private String overview;
 
     @Column

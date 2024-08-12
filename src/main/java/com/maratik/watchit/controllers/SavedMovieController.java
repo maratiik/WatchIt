@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(Urls.API_MOVIES)
@@ -19,9 +18,8 @@ public class SavedMovieController {
 
     private final UserRepository userRepository;
 
-    public SavedMovieController(
-            SavedMovieService movieService,
-            UserRepository userRepository) {
+    public SavedMovieController(SavedMovieService movieService,
+                                UserRepository userRepository) {
         this.movieService = movieService;
         this.userRepository = userRepository;
     }
@@ -34,36 +32,51 @@ public class SavedMovieController {
             if (mediaType == null) {
                 return movieService.findAllByUserUsername(principal.getName());
             } else {
-                return movieService.findAllByMediaTypeAndUserUsername(mediaType, principal.getName());
+                return movieService.findAllByMediaTypeAndUserUsername(
+                        mediaType,
+                        principal.getName());
             }
         } else {
-            return movieService.findAllContainingTitleAndByUserUsername(title, principal.getName());
+            if (mediaType == null) {
+                return movieService.findAllContainingTitleAndByUserUsername(
+                        title,
+                        principal.getName());
+            } else {
+                return movieService.findAllContainingTitleAndByMediaTypeAndUserUsername(
+                        title,
+                        mediaType,
+                        principal.getName());
+            }
         }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<SavedMovie> findById(Principal principal, @PathVariable Long id) {
-        Optional<SavedMovie> movie = movieService.findByIdAndUserUsername(id, principal.getName());
-        return movie.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<SavedMovie> findById(Principal principal,
+                                               @PathVariable Long id) {
+        return movieService.findByIdAndUserUsername(id, principal.getName())
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody SavedMovie savedMovie, Principal principal) {
-        System.out.println(savedMovie);
+    public ResponseEntity<Void> save(@RequestBody SavedMovie savedMovie,
+                                     Principal principal) {
         savedMovie.setUser(userRepository.findByUsername(principal.getName()).get());
         movieService.save(savedMovie);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody SavedMovie savedMovie, Principal principal) {
+    public ResponseEntity<Void> update(@RequestBody SavedMovie savedMovie,
+                                       Principal principal) {
         savedMovie.setUser(userRepository.findByUsername(principal.getName()).get());
         movieService.update(savedMovie);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       Principal principal) {
         movieService.deleteByIdAndUserUsername(id, principal.getName());
         return ResponseEntity.ok().build();
     }
