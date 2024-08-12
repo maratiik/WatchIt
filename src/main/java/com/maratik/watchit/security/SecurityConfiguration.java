@@ -31,19 +31,16 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeRequests((requests) -> requests
+                .authorizeHttpRequests(request -> request
                         .requestMatchers(Urls.INDEX).permitAll()
                         .requestMatchers(Urls.MOVIES + "/**").authenticated()
                         .requestMatchers(Urls.SEARCH + "/**").authenticated()
-                        .requestMatchers(Urls.API_SEARCH + "/**").authenticated()
                         .requestMatchers(Urls.API_MOVIES + "/**").authenticated()
-                )
-                .formLogin((form) -> form
+                        .requestMatchers(Urls.API_SEARCH + "/**").authenticated())
+                .formLogin(form -> form
                         .successHandler(successAuthHandler)
-                        .permitAll()
-                )
+                        .permitAll())
                 .logout(LogoutConfigurer::permitAll);
-
         return http.build();
     }
 
